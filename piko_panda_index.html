@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Piko Panda — Animal Hunt</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(#bcefff,#eafff3);color:#17384a}.app{max-width:760px;margin:auto;padding:16px}.top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.pill{background:#fff;padding:10px 14px;border-radius:18px;font-weight:700;box-shadow:0 4px 14px #0001}.card{background:#ffffffec;border-radius:28px;padding:24px 18px;margin-top:14px;text-align:center;box-shadow:0 10px 28px #28627a22}.panda{font-size:82px;animation:bob 1.4s infinite}@keyframes bob{50%{transform:translateY(-7px)}}h1{color:#24647a;font-size:36px}h2{font-size:26px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}.animal{border:0;border-radius:20px;background:#f8fff2;padding:20px;min-height:125px;font-size:55px;cursor:pointer;box-shadow:0 5px 12px #0001}.animal span{display:block;font-size:15px;font-weight:700;margin-top:6px}.animal:active{transform:scale(.96)}button.start,.next{border:0;border-radius:24px;padding:15px 25px;font-size:17px;font-weight:700;cursor:pointer}.start{background:#278a68;color:#fff}.next{background:#ffd45b}.hidden{display:none}.msg{min-height:30px;margin:16px 0;font-size:18px;font-weight:700}.wrong{animation:shake .3s}@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+</style></head><body><main class="app">
+<div class="top"><div class="pill">🐼 Piko Panda</div><div class="pill">⭐ <span id="score">0</span></div><div class="pill">❤️ <span id="lives">3</span></div></div>
+<section id="home" class="card"><div class="panda">🐼</div><h1>Panda Forest</h1><p>Help Piko find the right animals!</p><button class="start" id="start">▶ Start Adventure</button></section>
+<section id="game" class="card hidden"><div class="panda">🐼</div><h2 id="q"></h2><p>Tap the correct animal.</p><div id="grid" class="grid"></div><div id="msg" class="msg"></div><button id="next" class="next hidden">Next Challenge →</button></section>
+<section id="win" class="card hidden"><div class="panda">🐼🏆</div><h1>Forest Explorer!</h1><p>You completed Animal Hunt.</p><div style="font-size:30px">⭐⭐⭐</div><p>Reward unlocked: 🌿 Explorer Badge</p><button class="start" onclick="location.reload()">Play Again</button></section>
+</main>
+<script>
+const rounds=[
+["Find the Lion 🦁","🦁",[["🦁","Lion"],["🐘","Elephant"],["🐰","Rabbit"],["🐸","Frog"]]],
+["Find the Elephant 🐘","🐘",[["🐼","Panda"],["🐘","Elephant"],["🦊","Fox"],["🐯","Tiger"]]],
+["Find the Frog 🐸","🐸",[["🐵","Monkey"],["🐸","Frog"],["🦁","Lion"],["🐨","Koala"]]],
+["Find the Tiger 🐯","🐯",[["🐰","Rabbit"],["🐯","Tiger"],["🐘","Elephant"],["🦊","Fox"]]],
+["Find the Panda 🐼","🐼",[["🐸","Frog"],["🦁","Lion"],["🐼","Panda"],["🐵","Monkey"]]]
+];
+let i=0,score=0,lives=3,locked=false;
+const el=id=>document.getElementById(id);
+function render(){locked=false;el("q").textContent=rounds[i][0];el("msg").textContent="";el("next").classList.add("hidden");el("grid").innerHTML="";
+rounds[i][2].slice().sort(()=>Math.random()-.5).forEach(x=>{let b=document.createElement("button");b.className="animal";b.innerHTML=x[0]+"<span>"+x[1]+"</span>";b.onclick=()=>pick(x[0],b);el("grid").appendChild(b)})}
+function pick(x,b){if(locked)return;if(x===rounds[i][1]){locked=true;score+=10;el("score").textContent=score;el("msg").textContent="🎉 Correct! Piko is happy! +10 ⭐";el("next").classList.remove("hidden")}else{lives--;el("lives").textContent=lives;el("msg").textContent="Oops! Try again 😊";b.classList.add("wrong");setTimeout(()=>b.classList.remove("wrong"),350);if(lives===0){el("msg").textContent="💛 Piko gives you another chance!";setTimeout(()=>{lives=3;el("lives").textContent=3;render()},800)}}}
+el("start").onclick=()=>{el("home").classList.add("hidden");el("game").classList.remove("hidden");render()};
+el("next").onclick=()=>{i++;if(i===rounds.length){el("game").classList.add("hidden");el("win").classList.remove("hidden")}else render()};
+</script></body></html>
